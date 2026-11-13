@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101116">
+    <title>Gotitas — Laboratorio de shaders / c.l.a.u.s.t.r.o</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="gotitas.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">LABORATORIO DE SHADERS / c.l.a.u.s.t.r.o</p>
+          <h1>Gotitas</h1>
+        </div>
+        <span class="status"><span class="status-dot"></span> Preview web</span>
+      </header>
+
+      <section class="workspace" aria-label="Preview y controles">
+        <div class="stage">
+          <canvas id="preview" aria-label="Preview animado de estrellas de cuatro brazos"></canvas>
+          <p class="stage-note">Vista previa 2D · no ejecuta el material nativo de MadMapper</p>
+        </div>
+
+        <aside class="panel">
+          <h2>Estrellas</h2>
+          <label class="field">
+            <span>Cantidad <output id="countValue">6</output></span>
+            <input id="count" type="range" min="1" max="12" step="1" value="6">
+          </label>
+          <label class="field">
+            <span>Tamaño <output id="sizeValue">0.065</output></span>
+            <input id="size" type="range" min="0.01" max="0.22" step="0.005" value="0.065">
+          </label>
+          <label class="field">
+            <span>Variación de tamaño <output id="randomnessValue">0.18</output></span>
+            <input id="randomness" type="range" min="0" max="0.7" step="0.01" value="0.18">
+          </label>
+          <label class="field">
+            <span>Separación X <output id="spreadXValue">0.90</output></span>
+            <input id="spreadX" type="range" min="0.2" max="1.2" step="0.01" value="0.9">
+          </label>
+          <label class="field">
+            <span>Separación Y <output id="spreadYValue">0.82</output></span>
+            <input id="spreadY" type="range" min="0.2" max="1.2" step="0.01" value="0.82">
+          </label>
+          <label class="field">
+            <span>Jitter de celdas <output id="jitterValue">0.025</output></span>
+            <input id="jitter" type="range" min="0" max="0.12" step="0.005" value="0.025">
+          </label>
+          <label class="field">
+            <span>Semilla <output id="seedValue">11</output></span>
+            <input id="seed" type="range" min="0" max="100" step="0.1" value="11">
+          </label>
+
+          <h2 class="section-title">Secuencia</h2>
+          <label class="field">
+            <span>Duración <output id="durationValue">1.5 s</output></span>
+            <input id="duration" type="range" min="0.1" max="10" step="0.1" value="1.5">
+          </label>
+          <label class="field">
+            <span>Longitud de estela <output id="trailValue">0.35</output></span>
+            <input id="trail" type="range" min="0.02" max="1" step="0.01" value="0.35">
+          </label>
+          <label class="field">
+            <span>Desfase <output id="staggerValue">0.65</output></span>
+            <input id="stagger" type="range" min="0" max="1" step="0.01" value="0.65">
+          </label>
+          <label class="field">
+            <span>Velocidad <output id="speedValue">1.0</output></span>
+            <input id="speed" type="range" min="0" max="5" step="0.1" value="1">
+          </label>
+          <label class="field">
+            <span>Rotación <output id="rotationValue">90°</output></span>
+            <input id="rotation" type="range" min="-360" max="360" step="1" value="90">
+          </label>
+          <label class="field">
+            <span>Velocidad de rotación <output id="rotationSpeedValue">1.0</output></span>
+            <input id="rotationSpeed" type="range" min="0" max="5" step="0.1" value="1">
+          </label>
+          <label class="field">
+            <span>Suavidad de estela <output id="smoothnessValue">0.040</output></span>
+            <input id="smoothness" type="range" min="0.001" max="0.25" step="0.001" value="0.04">
+          </label>
+
+          <h2 class="section-title">Formación y barrido</h2>
+          <label class="field">
+            <span>Formación circular <output id="formationValue">0.00</output></span>
+            <input id="formation" type="range" min="0" max="1" step="0.01" value="0">
+          </label>
+          <label class="field">
+            <span>Radio del círculo <output id="radiusValue">0.65</output></span>
+            <input id="radius" type="range" min="0.1" max="1.2" step="0.01" value="0.65">
+          </label>
+          <label class="field">
+            <span>Rotación del círculo <output id="circleRotationValue">0°</output></span>
+            <input id="circleRotation" type="range" min="-360" max="360" step="1" value="0">
+          </label>
+          <label class="field">
+            <span>Barrido vertical <output id="sweepValue">1.00</output></span>
+            <input id="sweep" type="range" min="0" max="1" step="0.01" value="1">
+          </label>
+          <label class="field">
+            <span>Suavidad del barrido <output id="sweepSoftnessValue">0.060</output></span>
+            <input id="sweepSoftness" type="range" min="0.001" max="0.25" step="0.001" value="0.06">
+          </label>
+          <label class="field">
+            <span>Deriva <output id="driftValue">0.000</output></span>
+            <input id="drift" type="range" min="0" max="0.08" step="0.001" value="0">
+          </label>
+          <label class="field">
+            <span>Velocidad de deriva <output id="driftSpeedValue">1.0</output></span>
+            <input id="driftSpeed" type="range" min="0" max="10" step="0.1" value="1">
+          </label>
+
+          <h2 class="section-title">Color</h2>
+          <label class="color-field">Color <input id="color" type="color" value="#ffffff"></label>
+          <label class="field">
+            <span>Brillo <output id="brightnessValue">1.00</output></span>
+            <input id="brightness" type="range" min="0" max="2" step="0.01" value="1">
+          </label>
+        </aside>
+      </section>
+
+      <footer>
+        Material nativo: <code>shaders/gotitas.fs</code>
+      </footer>
+    </main>
+  </body>
+</html>
