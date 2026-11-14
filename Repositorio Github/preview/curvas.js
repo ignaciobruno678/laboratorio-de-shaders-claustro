@@ -85,11 +85,10 @@ function formatValue(n, step) {
 function createControls() {
   const container = document.querySelector("#generatedControls");
   groups.forEach((group) => {
-    const section = document.createElement("section");
-    section.className = "parameter-group";
+    const section = document.createElement("details");
+    section.className = "control-section parameter-group";
 
-    const heading = document.createElement("h2");
-    heading.className = "section-title";
+    const heading = document.createElement("summary");
     heading.textContent = group.title;
     section.append(heading);
 

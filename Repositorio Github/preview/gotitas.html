@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#000000">
     <title>Gotitas — claustro</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="navigation.js" defer></script>
     <script src="gotitas.js" defer></script>
     <script src="projection.js" defer></script>
     <script src="export-shader.js" defer></script>
@@ -18,12 +17,10 @@
           <img src="claustro-logo.png" alt="claustro" width="2031" height="455">
         </a>
         <div class="topbar-actions">
-          <label class="shader-picker" aria-label="Elegir shader">
-            <select id="shaderSelect" aria-label="Elegir shader">
-              <option value="gotitas.html" selected>Gotitas</option>
-              <option value="curvas.html">Curvas</option>
-            </select>
-          </label>
+          <nav class="shader-tabs" aria-label="Shaders disponibles">
+            <a href="gotitas.html" aria-current="page" aria-label="#002, Chispas"><span class="shader-tab-code">#002</span><span class="shader-tab-name" aria-hidden="true">chispas</span></a>
+            <a href="curvas.html" aria-label="#001, Curvaturas"><span class="shader-tab-code">#001</span><span class="shader-tab-name" aria-hidden="true">curvaturas</span></a>
+          </nav>
         </div>
       </header>
 
@@ -34,38 +31,61 @@
           </div>
           <div class="projection-grid">
             <section class="projection-view" aria-label="Vista volumétrica 3D">
-              <h2>Volumen 3D <span class="projection-scale-note">· ampliado, no a escala</span></h2>
-              <canvas id="projectionIso" aria-label="Volumen de luz y figura ampliados visualmente, no a escala física"></canvas>
+              <div class="projection-zoom-controls" role="group" aria-label="Zoom de volumen 3D">
+                <button id="projectionZoomOut" type="button" aria-label="Alejar">-</button>
+                <output id="projectionZoomValue" aria-live="polite">100%</output>
+                <button id="projectionZoomIn" type="button" aria-label="Acercar">+</button>
+                <button id="projectionZoomReset" type="button" aria-label="Restablecer vista" title="Restablecer vista">↺</button>
+              </div>
+              <canvas id="projectionIso" aria-label="Vista volumétrica 3D de la proyección"></canvas>
+              <div class="projection-surface-controls" role="group" aria-label="Superficie de la vista volumétrica">
+                <button id="projectionGridMode" type="button" aria-label="Mostrar grilla" title="Grilla" aria-pressed="true">
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <rect x="2.5" y="2.5" width="11" height="11" rx="1"></rect>
+                    <path d="M6.2 2.5v11M9.8 2.5v11M2.5 6.2h11M2.5 9.8h11"></path>
+                  </svg>
+                </button>
+                <button id="projectionSolidMode" type="button" aria-label="Mostrar suelo sólido" title="Suelo sólido" aria-pressed="false">
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <rect class="solid-floor-icon" x="3" y="3" width="10" height="10" rx="1"></rect>
+                  </svg>
+                </button>
+              </div>
             </section>
             <section class="projection-view" aria-label="Perfil de proyección">
-              <h2>Perfil</h2>
               <canvas id="projectionProfile" aria-label="Perfil del cono de proyección"></canvas>
             </section>
           </div>
         </div>
 
         <aside class="panel">
-          <h2>Proyección</h2>
+          <details class="control-section" open>
+            <summary>Proyección</summary>
           <label class="field">
             <span>Orientación</span>
             <select id="projectorOrientation">
               <option value="floor">Cenital · suelo</option>
-              <option value="wall">Horizontal · pared</option>
+              <option value="wall">Horizontal</option>
             </select>
           </label>
+          </details>
+          <details class="control-section">
+            <summary>Bruma</summary>
           <label class="field">
-            <span>Distancia <output id="projectorDistanceValue">2.0 m</output></span>
-            <input id="projectorDistance" type="range" min="0.5" max="10" step="0.1" value="2">
+            <span>Opacidad <output id="brumaAlphaValue">30%</output></span>
+            <input id="brumaAlpha" type="range" min="1" max="30" step="0.1" value="30">
           </label>
           <label class="field">
-            <span>Apertura <output id="projectorApertureValue">30°</output></span>
-            <input id="projectorAperture" type="range" min="5" max="60" step="1" value="30">
+            <span>Escala <output id="brumaScaleValue">1.00</output></span>
+            <input id="brumaScale" type="range" min="0.25" max="3" step="0.05" value="1">
           </label>
           <label class="field">
-            <span>Bruma <output id="brumaAlphaValue">30%</output></span>
-            <input id="brumaAlpha" type="range" min="1" max="100" step="1" value="30">
+            <span>Contraste <output id="brumaContrastValue">100%</output></span>
+            <input id="brumaContrast" type="range" min="0" max="200" step="1" value="100">
           </label>
-          <h2>Estrellas</h2>
+          </details>
+          <details class="control-section">
+            <summary>Estrellas</summary>
           <label class="field">
             <span>Cantidad <output id="countValue">6</output></span>
             <input id="count" type="range" min="1" max="12" step="1" value="6">
@@ -94,8 +114,10 @@
             <span>Semilla <output id="seedValue">11</output></span>
             <input id="seed" type="range" min="0" max="100" step="0.1" value="11">
           </label>
+          </details>
 
-          <h2 class="section-title">Secuencia</h2>
+          <details class="control-section">
+            <summary>Secuencia</summary>
           <label class="field">
             <span>Duración <output id="durationValue">1.5 s</output></span>
             <input id="duration" type="range" min="0.1" max="10" step="0.1" value="1.5">
@@ -124,8 +146,10 @@
             <span>Suavidad de estela <output id="smoothnessValue">0.040</output></span>
             <input id="smoothness" type="range" min="0.001" max="0.25" step="0.001" value="0.04">
           </label>
+          </details>
 
-          <h2 class="section-title">Formación y barrido</h2>
+          <details class="control-section">
+            <summary>Formación y barrido</summary>
           <label class="field">
             <span>Formación circular <output id="formationValue">0.00</output></span>
             <input id="formation" type="range" min="0" max="1" step="0.01" value="0">
@@ -154,13 +178,24 @@
             <span>Velocidad de deriva <output id="driftSpeedValue">1.0</output></span>
             <input id="driftSpeed" type="range" min="0" max="10" step="0.1" value="1">
           </label>
+          </details>
 
-          <h2 class="section-title">Color</h2>
-          <label class="color-field">Color <input id="color" type="color" value="#ffffff"></label>
+          <details class="control-section">
+            <summary>Color</summary>
+          <label class="field">
+            <span>Cantidad de colores</span>
+            <select id="colorMode">
+              <option value="0" selected>Un color</option>
+              <option value="1">Dos colores</option>
+            </select>
+          </label>
+          <label class="color-field">Color 1 <input id="color" type="color" value="#ffffff"></label>
+          <label class="color-field" id="color2Group" hidden>Color 2 <input id="color2" type="color" value="#8b5cf6"></label>
           <label class="field">
             <span>Brillo <output id="brightnessValue">1.00</output></span>
             <input id="brightness" type="range" min="0" max="2" step="0.01" value="1">
           </label>
+          </details>
           <button class="export-button" id="exportShader" type="button">Exportar .fs</button>
         </aside>
       </section>
