@@ -1,31 +1,18 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   font-family: Helvetica, Arial, sans-serif;
   background: var(--page-background);
-  color: #111111;
+  color: #ededed;
   --brand-red: #ff0000;
-  --muted: #777777;
-  --panel: #ffffff;
-  --border: #d7d7d7;
-  --page-background: #ededed;
-  --page-text: #111111;
-  --control-background: #ffffff;
-  --control-border: #c9c9c9;
+  --muted: #aaaaaa;
+  --panel: #000000;
+  --border: #292929;
+  --page-background: #000000;
+  --page-text: #ededed;
+  --control-background: #111111;
+  --control-border: #444444;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-}
-
-html[data-page-theme="dark"] {
-  color-scheme: dark;
-  background: #111111;
-  color: #ededed;
-  --page-background: #111111;
-  --page-text: #ededed;
-  --panel: #1a1a1a;
-  --border: #333333;
-  --muted: #aaaaaa;
-  --control-background: #1a1a1a;
-  --control-border: #444444;
 }
 
 * {
@@ -70,9 +57,6 @@ body {
   display: block;
   width: 100%;
   height: auto;
-}
-
-html[data-page-theme="dark"] .brand-mark img {
   filter: invert(1);
 }
 
@@ -169,7 +153,7 @@ html[data-page-theme="dark"] .brand-mark img {
     linear-gradient(#ffffff0b 1px, transparent 1px),
     linear-gradient(90deg, #ffffff0b 1px, transparent 1px);
   background-size: 32px 32px;
-  background-color: #111111;
+  background-color: #000000;
 }
 
 .projection-grid {
@@ -202,7 +186,7 @@ html[data-page-theme="dark"] .brand-mark img {
 
 .projection-view canvas {
   border-radius: 2px;
-  background: #111111;
+  background: #000000;
 }
 
 canvas {
@@ -319,8 +303,8 @@ footer {
   margin-top: 12px;
 }
 
-html[data-page-theme="dark"] .panel {
-  scrollbar-color: #555555 #1a1a1a;
+.panel {
+  scrollbar-color: #555555 #000000;
 }
 
 @media (max-width: 760px) {

@@ -5,7 +5,6 @@ const orientationControl = document.querySelector("#projectorOrientation");
 const distanceControl = document.querySelector("#projectorDistance");
 const apertureControl = document.querySelector("#projectorAperture");
 const brumaControl = document.querySelector("#brumaAlpha");
-const pageThemeControl = document.querySelector("#pageTheme");
 const distanceOutput = document.querySelector("#projectorDistanceValue");
 const apertureOutput = document.querySelector("#projectorApertureValue");
 const brumaOutput = document.querySelector("#brumaAlphaValue");
@@ -19,6 +18,7 @@ const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true }
 const cos30 = Math.cos(Math.PI / 6);
 const sin30 = Math.sin(Math.PI / 6);
 const projectionShapeScale = 2.5; // Visual emphasis; the displayed footprint is not to physical scale.
+const projectionZoom = 1.35;
 const volumeSliceSteps = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
 
 function resizeView(view) {
@@ -109,11 +109,11 @@ function createIsoTransform(view, settings) {
   ));
   const maxX = Math.max(...projectedCorners.map((point) => Math.abs(point[0] - projector[0])));
   const maxY = Math.max(...projectedCorners.map((point) => Math.abs(point[1] - projector[1])));
-  const margin = 22;
+  const margin = 14;
   const scale = Math.min(
     (view.width - margin * 2) / Math.max(maxX * 2, 0.001),
     (view.height - margin * 2) / Math.max(maxY * 2, 0.001),
-  );
+  ) * projectionZoom;
   const offsetX = view.width / 2 - projector[0] * scale;
   const offsetY = view.height / 2 - projector[1] * scale;
 
@@ -336,7 +336,7 @@ function drawProjectionGrid(context, frame, settings) {
 function drawIso(view, settings, sample, points) {
   const context = view.context;
   context.clearRect(0, 0, view.width, view.height);
-  context.fillStyle = "#111111";
+  context.fillStyle = "#000000";
   context.fillRect(0, 0, view.width, view.height);
   const center = targetCenter(points, settings);
   const frame = createIsoTransform(view, settings);
@@ -371,11 +371,11 @@ function createProfileTransform(view, settings) {
     : [[0, -axisHalfLength], [0, axisHalfLength]];
   const maxX = Math.max(...targets.map((point) => Math.abs(point[0] - projector[0])));
   const maxY = Math.max(...targets.map((point) => Math.abs(point[1] - projector[1])));
-  const margin = 24;
+  const margin = 14;
   const scale = Math.min(
     (view.width - margin * 2) / Math.max(maxX * 2, 0.001),
     (view.height - margin * 2) / Math.max(maxY * 2, 0.001),
-  );
+  ) * projectionZoom;
   const offsetX = view.width / 2 - projector[0] * scale;
   const offsetY = view.height / 2 + projector[1] * scale;
 
@@ -493,7 +493,7 @@ function drawProfileVolume(context, transform, settings, projector, points, samp
 function drawProfile(view, settings, sample, points) {
   const context = view.context;
   context.clearRect(0, 0, view.width, view.height);
-  context.fillStyle = "#111111";
+  context.fillStyle = "#000000";
   context.fillRect(0, 0, view.width, view.height);
 
   const projector = profileProjector(settings);
@@ -562,10 +562,6 @@ function updateOutputs() {
 distanceControl.addEventListener("input", updateOutputs);
 apertureControl.addEventListener("input", updateOutputs);
 brumaControl.addEventListener("input", updateOutputs);
-pageThemeControl.addEventListener("change", () => {
-  document.documentElement.dataset.pageTheme = pageThemeControl.value;
-});
-document.documentElement.dataset.pageTheme = pageThemeControl.value;
 updateOutputs();
 
 function renderProjection() {
