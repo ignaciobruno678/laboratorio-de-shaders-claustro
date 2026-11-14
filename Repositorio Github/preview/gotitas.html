@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#101116">
+    <meta name="theme-color" content="#ededed">
     <title>Gotitas — claustro</title>
     <link rel="stylesheet" href="styles.css">
     <script src="navigation.js" defer></script>
     <script src="gotitas.js" defer></script>
+    <script src="projection.js" defer></script>
+    <script src="export-shader.js" defer></script>
   </head>
   <body>
     <main class="app">
@@ -16,24 +18,60 @@
           <img src="claustro-logo.png" alt="claustro" width="2031" height="455">
         </a>
         <div class="topbar-actions">
-          <label class="shader-picker">
-            <span>Shader</span>
+          <label class="shader-picker" aria-label="Elegir shader">
             <select id="shaderSelect" aria-label="Elegir shader">
               <option value="gotitas.html" selected>Gotitas</option>
               <option value="curvas.html">Curvas</option>
             </select>
           </label>
-          <span class="status"><span class="status-dot"></span> Preview web</span>
         </div>
       </header>
 
       <section class="workspace" aria-label="Preview y controles">
-        <div class="stage">
-          <canvas id="preview" aria-label="Preview animado de estrellas de cuatro brazos"></canvas>
-          <p class="stage-note">Vista previa 2D · no ejecuta el material nativo de MadMapper</p>
+        <div class="visual-stack">
+          <div class="stage">
+            <canvas id="preview" aria-label="Preview animado de estrellas de cuatro brazos"></canvas>
+          </div>
+          <div class="projection-grid">
+            <section class="projection-view" aria-label="Vista volumétrica 3D">
+              <h2>Volumen 3D <span class="projection-scale-note">· ampliado, no a escala</span></h2>
+              <canvas id="projectionIso" aria-label="Volumen de luz y figura ampliados visualmente, no a escala física"></canvas>
+            </section>
+            <section class="projection-view" aria-label="Perfil de proyección">
+              <h2>Perfil</h2>
+              <canvas id="projectionProfile" aria-label="Perfil del cono de proyección"></canvas>
+            </section>
+          </div>
         </div>
 
         <aside class="panel">
+          <h2>Proyección</h2>
+          <label class="field">
+            <span>Fondo de página</span>
+            <select id="pageTheme">
+              <option value="light" selected>Claro</option>
+              <option value="dark">Oscuro</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Orientación</span>
+            <select id="projectorOrientation">
+              <option value="floor">Cenital · suelo</option>
+              <option value="wall">Horizontal · pared</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Distancia <output id="projectorDistanceValue">2.0 m</output></span>
+            <input id="projectorDistance" type="range" min="0.5" max="10" step="0.1" value="2">
+          </label>
+          <label class="field">
+            <span>Apertura <output id="projectorApertureValue">30°</output></span>
+            <input id="projectorAperture" type="range" min="5" max="60" step="1" value="30">
+          </label>
+          <label class="field">
+            <span>Bruma <output id="brumaAlphaValue">30%</output></span>
+            <input id="brumaAlpha" type="range" min="1" max="100" step="1" value="30">
+          </label>
           <h2>Estrellas</h2>
           <label class="field">
             <span>Cantidad <output id="countValue">6</output></span>
@@ -130,11 +168,12 @@
             <span>Brillo <output id="brightnessValue">1.00</output></span>
             <input id="brightness" type="range" min="0" max="2" step="0.01" value="1">
           </label>
+          <button class="export-button" id="exportShader" type="button">Exportar .fs</button>
         </aside>
       </section>
 
       <footer>
-        Material nativo: <code>shaders/gotitas.fs</code>
+        <span id="exportStatus" class="export-status" role="status" aria-live="polite"></span>
       </footer>
     </main>
   </body>

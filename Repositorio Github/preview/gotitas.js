@@ -218,12 +218,12 @@ function drawArm(center, scale, rotation, armIndex, phase, drift) {
     const brightness = armBrightness(t, phase) * sweepBrightness(worldY) * value("brightness");
     if (brightness < 0.005) continue;
 
-    context.strokeStyle = color;
-    context.globalAlpha = Math.min(1, brightness);
-    context.lineWidth = 1.4;
     context.beginPath();
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
+    context.strokeStyle = color;
+    context.globalAlpha = Math.min(1, brightness);
+    context.lineWidth = 1.4;
     context.stroke();
   }
   context.globalAlpha = 1;

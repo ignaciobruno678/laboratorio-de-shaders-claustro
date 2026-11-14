@@ -3,8 +3,6 @@
 const canvas = document.querySelector("#preview");
 const context = canvas.getContext("2d");
 const controls = {
-  family: document.querySelector("#family"),
-  spiralDirection: document.querySelector("#spiralDirection"),
   colorMode: document.querySelector("#colorMode"),
   color: document.querySelector("#color"),
   color2: document.querySelector("#color2"),
@@ -57,7 +55,6 @@ const groups = [
   },
   {
     title: "Forma orgánica",
-    family: 0,
     controls: [
       ["orgFreq1", "Frecuencia 1", 1, 12, 0.1, 3],
       ["orgFreq2", "Frecuencia 2", 1, 16, 0.1, 5],
@@ -66,16 +63,6 @@ const groups = [
       ["orgSkewX", "Inclinación X", -1, 1, 0.01, 0.2],
       ["orgSkewY", "Inclinación Y", -1, 1, 0.01, 0.1],
       ["orgTwist", "Giro", 0, 1.5, 0.01, 0.35],
-    ],
-  },
-  {
-    title: "Espiral",
-    family: 1,
-    controls: [
-      ["spiralTurns", "Vueltas", 0.5, 10, 0.1, 3.5],
-      ["spiralInnerRadius", "Radio interior", 0, 0.7, 0.01, 0.05],
-      ["spiralGrowth", "Crecimiento", 0.2, 3, 0.01, 1],
-      ["spiralReturnOffset", "Desfase al volver", 0, 0.5, 0.01, 0.02],
     ],
   },
   {
@@ -100,7 +87,6 @@ function createControls() {
   groups.forEach((group) => {
     const section = document.createElement("section");
     section.className = "parameter-group";
-    if (group.family !== undefined) section.dataset.family = String(group.family);
 
     const heading = document.createElement("h2");
     heading.className = "section-title";
@@ -142,16 +128,7 @@ function createControls() {
   });
 }
 
-function updateFamilyControls() {
-  const family = controls.family.value;
-  document.querySelectorAll("[data-family]").forEach((group) => {
-    group.hidden = group.dataset.family !== family;
-  });
-}
-
 createControls();
-controls.family.addEventListener("change", updateFamilyControls);
-updateFamilyControls();
 controls.colorMode.addEventListener("change", () => {
   document.querySelector("#color2Group").hidden = controls.colorMode.value !== "1";
 });
@@ -310,27 +287,8 @@ function flowerShape(t) {
   return quadraticBezier(tip, control, center, u);
 }
 
-function spiralPoint(u, angularOffset) {
-  const direction = value("spiralDirection") === 0 ? 1 : -1;
-  const radius = value("spiralInnerRadius")
-    + (1 - value("spiralInnerRadius")) * Math.pow(clamp(u, 0, 1), value("spiralGrowth"));
-  const angle = direction * u * TWO_PI * value("spiralTurns") + angularOffset;
-  return [Math.cos(angle) * radius, Math.sin(angle) * radius];
-}
-
-function spiralShape(t) {
-  if (t < 0.5) return spiralPoint(t * 2, 0);
-  const u = 1 - (t - 0.5) * 2;
-  const angularOffset = value("spiralReturnOffset") * Math.sin(u * PI);
-  return spiralPoint(u, angularOffset);
-}
-
 function figurePoint(t) {
-  const family = value("family");
-  if (family === 0) return organicShape(t);
-  if (family === 1) return crossShape(t);
-  if (family === 2) return flowerShape(t);
-  return spiralShape(t);
+  return organicShape(t);
 }
 
 function motionProgress(time) {
@@ -388,14 +346,15 @@ function drawFigure(figureIndex, motion, points) {
     const a = transform(points[pointIndex]);
     const b = transform(points[pointIndex + 1]);
 
-    context.globalAlpha = Math.min(1, brightness);
-    context.strokeStyle = controls.colorMode.value === "1" && t >= 0.5
+    const color = controls.colorMode.value === "1" && t >= 0.5
       ? controls.color2.value
       : controls.color.value;
-    context.lineWidth = 1.5;
     context.beginPath();
     context.moveTo(a[0], a[1]);
     context.lineTo(b[0], b[1]);
+    context.globalAlpha = Math.min(1, brightness);
+    context.strokeStyle = color;
+    context.lineWidth = 1.5;
     context.stroke();
   }
   context.globalAlpha = 1;
