@@ -4,18 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#101116">
-    <title>Gotitas — Laboratorio de shaders / c.l.a.u.s.t.r.o</title>
+    <title>Gotitas — claustro</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="navigation.js" defer></script>
     <script src="gotitas.js" defer></script>
   </head>
   <body>
     <main class="app">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">LABORATORIO DE SHADERS / c.l.a.u.s.t.r.o</p>
-          <h1>Gotitas</h1>
+        <a class="brand-mark" href="https://holaclaustro.com/" aria-label="Visitar el sitio de claustro">
+          <img src="claustro-logo.png" alt="claustro" width="2031" height="455">
+        </a>
+        <div class="topbar-actions">
+          <label class="shader-picker">
+            <span>Shader</span>
+            <select id="shaderSelect" aria-label="Elegir shader">
+              <option value="gotitas.html" selected>Gotitas</option>
+              <option value="curvas.html">Curvas</option>
+            </select>
+          </label>
+          <span class="status"><span class="status-dot"></span> Preview web</span>
         </div>
-        <span class="status"><span class="status-dot"></span> Preview web</span>
       </header>
 
       <section class="workspace" aria-label="Preview y controles">

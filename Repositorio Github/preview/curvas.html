@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101116">
+    <title>Curvas — claustro</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="navigation.js" defer></script>
+    <script src="curvas.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <a class="brand-mark" href="https://holaclaustro.com/" aria-label="Visitar el sitio de claustro">
+          <img src="claustro-logo.png" alt="claustro" width="2031" height="455">
+        </a>
+        <div class="topbar-actions">
+          <label class="shader-picker">
+            <span>Shader</span>
+            <select id="shaderSelect" aria-label="Elegir shader">
+              <option value="gotitas.html">Gotitas</option>
+              <option value="curvas.html" selected>Curvas</option>
+            </select>
+          </label>
+          <span class="status"><span class="status-dot"></span> Preview web</span>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Preview y controles">
+        <div class="stage">
+          <canvas id="preview" aria-label="Preview animado del shader Curvas"></canvas>
+          <p class="stage-note">Vista previa 2D · no ejecuta el material nativo de MadMapper</p>
+        </div>
+
+        <aside class="panel" aria-label="Controles del shader Curvas">
+          <h2>Familia de figura</h2>
+          <label class="field">
+            <span>Forma</span>
+            <select id="family">
+              <option value="0">Orgánica</option>
+              <option value="1">Espiral</option>
+            </select>
+          </label>
+
+          <label class="field" data-family="1">
+            <span>Dirección de espiral</span>
+            <select id="spiralDirection">
+              <option value="0">Horario</option>
+              <option value="1">Antihorario</option>
+            </select>
+          </label>
+
+          <div id="generatedControls"></div>
+
+          <h2 class="section-title">Color</h2>
+          <label class="field">
+            <span>Cantidad de colores</span>
+            <select id="colorMode">
+              <option value="0">Un color</option>
+              <option value="1">Dos colores</option>
+            </select>
+          </label>
+          <label class="color-field">Color 1 <input id="color" type="color" value="#ffffff"></label>
+          <label class="color-field" id="color2Group" hidden>Color 2 <input id="color2" type="color" value="#8b5cf6"></label>
+        </aside>
+      </section>
+
+      <footer>
+        Material nativo: <code>shaders/curvas.fs</code>
+      </footer>
+    </main>
+  </body>
+</html>
