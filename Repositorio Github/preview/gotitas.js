@@ -132,10 +132,11 @@ previewZoomResetControl.addEventListener("click", () => {
   previewPan = { x: 0, y: 0 };
   updatePreviewZoom(1);
 });
-canvas.addEventListener("wheel", (event) => {
-  event.preventDefault();
-  updatePreviewZoom(previewZoom * Math.exp(-event.deltaY * 0.001));
-}, { passive: false });
+canvas.addEventListener("dblclick", () => {
+  const shouldReset = previewZoom > 1.01;
+  if (shouldReset) previewPan = { x: 0, y: 0 };
+  updatePreviewZoom(shouldReset ? 1 : 2);
+});
 
 canvas.addEventListener("pointerdown", (event) => {
   if (event.button !== 0) return;

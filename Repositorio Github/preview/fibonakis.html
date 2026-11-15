@@ -6,20 +6,26 @@
     <meta name="theme-color" content="#000000">
     <title>Fibonakis — claustro</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
     <script src="fibonakis.js" defer></script>
     <script src="projection.js" defer></script>
+    <script src="lab-ui.js" defer></script>
   </head>
   <body>
     <main class="app">
       <header class="topbar">
         <a class="brand-mark" href="https://holaclaustro.com/" aria-label="Visitar el sitio de claustro">
           <img src="claustro-logo.png" alt="claustro" width="2031" height="455">
+          <pre class="ascii-logo" aria-hidden="true"> ____,__,   ____,_, _,____,____,____, ____,
+(-/  (-|   (-/_|(-|  (-(__(-|  (-|__)(-/  \
+ _\__,_|__,_/  |,_|__/____)_|,  _|  \,_\__/,
+(    (    (     (    (    (    (     (     </pre>
         </a>
         <div class="topbar-actions">
           <nav class="shader-tabs" aria-label="Shaders disponibles">
-            <a href="fibonakis.html" aria-current="page" aria-label="#003, Fibonakis"><span class="shader-tab-code">#003</span><span class="shader-tab-name" aria-hidden="true">fibonakis</span></a>
-            <a href="gotitas.html" aria-label="#002, Chispas"><span class="shader-tab-code">#002</span><span class="shader-tab-name" aria-hidden="true">chispas</span></a>
             <a href="curvas.html" aria-label="#001, Curvaturas"><span class="shader-tab-code">#001</span><span class="shader-tab-name" aria-hidden="true">curvaturas</span></a>
+            <a href="gotitas.html" aria-label="#002, Chispas"><span class="shader-tab-code">#002</span><span class="shader-tab-name" aria-hidden="true">chispas</span></a>
+            <a href="fibonakis.html" aria-current="page" aria-label="#003, Fibonakis"><span class="shader-tab-code">#003</span><span class="shader-tab-name" aria-hidden="true">fibonakis</span></a>
           </nav>
         </div>
       </header>

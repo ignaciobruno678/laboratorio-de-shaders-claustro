@@ -23,7 +23,9 @@ const shaderParameterNames = {
     sweepSoftness: "mat_sweepSoftness",
     drift: "mat_driftAmount",
     driftSpeed: "mat_driftSpeed",
+    colorMode: "mat_colorMode",
     color: "mat_color",
+    color2: "mat_color2",
     brightness: "mat_brightness",
   },
   curvas: {
@@ -118,7 +120,7 @@ async function exportConfiguredShader() {
     ]),
   );
   Object.assign(values, fixedShaderParameters[shader]);
-  const response = await fetch(`../shaders/${shader}.fs`);
+  const response = await fetch(`../shaders/${shader}-configurada.fs`);
   if (!response.ok) {
     throw new Error(`No se pudo cargar el shader base (HTTP ${response.status}).`);
   }

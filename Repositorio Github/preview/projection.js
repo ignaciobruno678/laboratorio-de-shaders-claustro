@@ -505,10 +505,8 @@ function drawProjectionGrid(context, frame, settings, width, height) {
   context.save();
   for (let index = firstHorizontal; index <= lastHorizontal; index += 1) {
     const horizontal = index * horizontalStep;
-    context.strokeStyle = index === 0
-      ? "rgba(255, 255, 255, 0.28)"
-      : "rgba(255, 255, 255, 0.15)";
-    context.lineWidth = index === 0 ? 1 : 0.65;
+    context.strokeStyle = "rgba(255, 255, 255, 0.055)";
+    context.lineWidth = 1;
     const acrossPlane = [
       frame.map(projectionPlanePoint(horizontal, (firstVertical - 1) * verticalStep, settings)),
       frame.map(projectionPlanePoint(horizontal, (lastVertical + 1) * verticalStep, settings)),
@@ -521,10 +519,8 @@ function drawProjectionGrid(context, frame, settings, width, height) {
 
   for (let index = firstVertical; index <= lastVertical; index += 1) {
     const vertical = index * verticalStep;
-    context.strokeStyle = index === 0
-      ? "rgba(255, 255, 255, 0.28)"
-      : "rgba(255, 255, 255, 0.15)";
-    context.lineWidth = index === 0 ? 1 : 0.65;
+    context.strokeStyle = "rgba(255, 255, 255, 0.055)";
+    context.lineWidth = 1;
     const alongPlane = [
       frame.map(projectionPlanePoint((firstHorizontal - 1) * horizontalStep, vertical, settings)),
       frame.map(projectionPlanePoint((lastHorizontal + 1) * horizontalStep, vertical, settings)),
@@ -848,10 +844,11 @@ zoomResetControl.addEventListener("click", () => {
   projectionPan = { x: 0, y: 0 };
   updateProjectionZoom(1);
 });
-views[0].canvas.addEventListener("wheel", (event) => {
-  event.preventDefault();
-  updateProjectionZoom(projectionZoom * Math.exp(-event.deltaY * 0.001));
-}, { passive: false });
+views[0].canvas.addEventListener("dblclick", () => {
+  const shouldReset = projectionZoom > 1.01;
+  if (shouldReset) projectionPan = { x: 0, y: 0 };
+  updateProjectionZoom(shouldReset ? 1 : 2);
+});
 
 function setProjectionSurfaceMode(mode) {
   projectionSurfaceMode = mode;

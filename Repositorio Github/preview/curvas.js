@@ -77,10 +77,6 @@ const groups = [
       ["orgTwist", "Giro", 0, 1.5, 0.01, 0.35],
     ],
   },
-  {
-    title: "Brillo",
-    controls: [["brightness", "Brillo", 0, 2, 0.01, 1]],
-  },
 ];
 
 function value(name) {
@@ -186,10 +182,11 @@ previewZoomResetControl.addEventListener("click", () => {
   previewPan = { x: 0, y: 0 };
   updatePreviewZoom(1);
 });
-canvas.addEventListener("wheel", (event) => {
-  event.preventDefault();
-  updatePreviewZoom(previewZoom * Math.exp(-event.deltaY * 0.001));
-}, { passive: false });
+canvas.addEventListener("dblclick", () => {
+  const shouldReset = previewZoom > 1.01;
+  if (shouldReset) previewPan = { x: 0, y: 0 };
+  updatePreviewZoom(shouldReset ? 1 : 2);
+});
 
 canvas.addEventListener("pointerdown", (event) => {
   if (event.button !== 0) return;
@@ -406,8 +403,8 @@ function drawFigure(figureIndex, motion, points) {
     const t1 = (pointIndex + 1) * step;
     const t = (t0 + t1) * 0.5;
     const trimT = fract(t - animatedOffset + 20);
-    const brightness = trimMask(trimT, value("start"), value("end")) * value("brightness");
-    if (brightness < 0.005) continue;
+    const alpha = trimMask(trimT, value("start"), value("end"));
+    if (alpha < 0.005) continue;
 
     const transform = (p) => {
       const scaled = [p[0] * scale * value("scaleX"), p[1] * scale * value("scaleY")];
@@ -426,7 +423,7 @@ function drawFigure(figureIndex, motion, points) {
     context.beginPath();
     context.moveTo(a[0], a[1]);
     context.lineTo(b[0], b[1]);
-    context.globalAlpha = Math.min(1, brightness);
+    context.globalAlpha = Math.min(1, alpha);
     context.strokeStyle = color;
     context.lineWidth = 1.5;
     context.stroke();
