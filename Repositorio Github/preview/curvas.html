@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="styles.css">
     <script src="curvas.js" defer></script>
     <script src="projection.js" defer></script>
-    <script src="export-shader.js" defer></script>
   </head>
   <body>
     <main class="app">
@@ -98,13 +97,9 @@
           <label class="color-field">Color 1 <input id="color" type="color" value="#ffffff"></label>
           <label class="color-field" id="color2Group" hidden>Color 2 <input id="color2" type="color" value="#8b5cf6"></label>
           </details>
-          <button class="export-button" id="exportShader" type="button">Exportar .fs</button>
         </aside>
       </section>
 
-      <footer>
-        <span id="exportStatus" class="export-status" role="status" aria-live="polite"></span>
-      </footer>
     </main>
   </body>
 </html>
