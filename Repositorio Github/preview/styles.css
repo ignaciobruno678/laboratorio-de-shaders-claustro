@@ -157,6 +157,15 @@ body {
   background-color: #000000;
 }
 
+.stage canvas {
+  cursor: grab;
+  touch-action: none;
+}
+
+.stage canvas.is-panning {
+  cursor: grabbing;
+}
+
 .projection-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

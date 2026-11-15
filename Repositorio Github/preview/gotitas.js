@@ -1,7 +1,15 @@
 "use strict";
 
 const canvas = document.querySelector("#preview");
-const context = canvas.getContext("2d");
+const displayContext = canvas.getContext("2d");
+const projectionSourceCanvas = document.createElement("canvas");
+const projectionSourceContext = projectionSourceCanvas.getContext("2d");
+let context = displayContext;
+window.projectionSourceCanvas = projectionSourceCanvas;
+const previewZoomOutControl = document.querySelector("#previewZoomOut");
+const previewZoomInControl = document.querySelector("#previewZoomIn");
+const previewZoomResetControl = document.querySelector("#previewZoomReset");
+const previewZoomOutput = document.querySelector("#previewZoomValue");
 const controls = {
   count: document.querySelector("#count"),
   size: document.querySelector("#size"),
@@ -24,7 +32,9 @@ const controls = {
   sweepSoftness: document.querySelector("#sweepSoftness"),
   drift: document.querySelector("#drift"),
   driftSpeed: document.querySelector("#driftSpeed"),
+  colorMode: document.querySelector("#colorMode"),
   color: document.querySelector("#color"),
+  color2: document.querySelector("#color2"),
   brightness: document.querySelector("#brightness"),
 };
 
@@ -33,6 +43,10 @@ const ARMS_PER_STAR = 4;
 const POINTS_PER_ARM = 45;
 let canvasWidth = 0;
 let canvasHeight = 0;
+let previewZoom = 1;
+let previewPan = { x: 0, y: 0 };
+let previewPointerId = null;
+let lastPreviewPointerPosition = null;
 
 function value(name) {
   return Number(controls[name].value);
@@ -72,17 +86,84 @@ updateOutput("drift", "driftValue", (n) => n.toFixed(3));
 updateOutput("driftSpeed", "driftSpeedValue", (n) => n.toFixed(1));
 updateOutput("brightness", "brightnessValue", (n) => n.toFixed(2));
 
+controls.colorMode.addEventListener("change", () => {
+  document.querySelector("#color2Group").hidden = controls.colorMode.value !== "1";
+});
+
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   const pixelRatio = window.devicePixelRatio || 1;
   canvasWidth = rect.width;
   canvasHeight = rect.height;
-  canvas.width = Math.round(rect.width * pixelRatio);
-  canvas.height = Math.round(rect.height * pixelRatio);
-  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  const resolutionScale = pixelRatio;
+  const width = Math.round(rect.width * resolutionScale);
+  const height = Math.round(rect.height * resolutionScale);
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  if (projectionSourceCanvas.width !== width || projectionSourceCanvas.height !== height) {
+    projectionSourceCanvas.width = width;
+    projectionSourceCanvas.height = height;
+  }
+  displayContext.setTransform(
+    resolutionScale * previewZoom,
+    0,
+    0,
+    resolutionScale * previewZoom,
+    resolutionScale * (canvasWidth * (1 - previewZoom) / 2 + previewPan.x),
+    resolutionScale * (canvasHeight * (1 - previewZoom) / 2 + previewPan.y),
+  );
+  projectionSourceContext.setTransform(resolutionScale, 0, 0, resolutionScale, 0, 0);
 }
 
 new ResizeObserver(resizeCanvas).observe(canvas);
+
+function updatePreviewZoom(zoom) {
+  previewZoom = Math.min(6, Math.max(0.5, zoom));
+  resizeCanvas();
+  previewZoomOutput.value = `${Math.round(previewZoom * 100)}%`;
+  previewZoomOutput.textContent = previewZoomOutput.value;
+}
+
+previewZoomInControl.addEventListener("click", () => updatePreviewZoom(previewZoom * 1.2));
+previewZoomOutControl.addEventListener("click", () => updatePreviewZoom(previewZoom / 1.2));
+previewZoomResetControl.addEventListener("click", () => {
+  previewPan = { x: 0, y: 0 };
+  updatePreviewZoom(1);
+});
+canvas.addEventListener("wheel", (event) => {
+  event.preventDefault();
+  updatePreviewZoom(previewZoom * Math.exp(-event.deltaY * 0.001));
+}, { passive: false });
+
+canvas.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  previewPointerId = event.pointerId;
+  lastPreviewPointerPosition = [event.clientX, event.clientY];
+  canvas.setPointerCapture(event.pointerId);
+  canvas.classList.add("is-panning");
+});
+
+canvas.addEventListener("pointermove", (event) => {
+  if (event.pointerId !== previewPointerId || !lastPreviewPointerPosition) return;
+  previewPan.x += event.clientX - lastPreviewPointerPosition[0];
+  previewPan.y += event.clientY - lastPreviewPointerPosition[1];
+  lastPreviewPointerPosition = [event.clientX, event.clientY];
+  resizeCanvas();
+});
+
+function finishPreviewPan(event) {
+  if (event.pointerId !== previewPointerId) return;
+  previewPointerId = null;
+  lastPreviewPointerPosition = null;
+  canvas.classList.remove("is-panning");
+}
+
+canvas.addEventListener("pointerup", finishPreviewPan);
+canvas.addEventListener("pointercancel", finishPreviewPan);
+canvas.addEventListener("lostpointercapture", finishPreviewPan);
 
 function fract(n) {
   return n - Math.floor(n);
@@ -221,7 +302,9 @@ function drawArm(center, scale, rotation, armIndex, phase, drift) {
     context.beginPath();
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
-    context.strokeStyle = color;
+    context.strokeStyle = controls.colorMode.value === "1" && t >= 0.5
+      ? controls.color2.value
+      : color;
     context.globalAlpha = Math.min(1, brightness);
     context.lineWidth = 1.4;
     context.stroke();
@@ -231,11 +314,19 @@ function drawArm(center, scale, rotation, armIndex, phase, drift) {
 
 let viewScale = 1;
 
-function render(now) {
+function clearCanvas(targetContext, targetCanvas) {
+  targetContext.save();
+  targetContext.setTransform(1, 0, 0, 1, 0, 0);
+  targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+  targetContext.restore();
+}
+
+function renderFrame(now, targetContext, targetCanvas) {
   if (canvasWidth <= 0 || canvasHeight <= 0) {
     return;
   }
-  context.clearRect(0, 0, canvasWidth, canvasHeight);
+  context = targetContext;
+  clearCanvas(context, targetCanvas);
   viewScale = Math.min(canvasWidth * 0.4, canvasHeight * 0.4);
   const elapsed = now / 1000;
   const animationTime = elapsed * value("speed");
@@ -253,6 +344,11 @@ function render(now) {
       drawArm(center, scale, rotation, armIndex, phase, drift);
     }
   }
+}
+
+function render(now) {
+  renderFrame(now, projectionSourceContext, projectionSourceCanvas);
+  renderFrame(now, displayContext, canvas);
 }
 
 let previousFrame = performance.now();

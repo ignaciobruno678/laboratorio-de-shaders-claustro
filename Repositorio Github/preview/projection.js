@@ -1,6 +1,9 @@
 "use strict";
 
-const sourceCanvas = document.querySelector("#preview");
+const sourceCanvas = window.projectionSourceCanvas;
+if (!(sourceCanvas instanceof HTMLCanvasElement)) {
+  throw new Error("Missing unzoomed projection source canvas.");
+}
 const orientationControl = document.querySelector("#projectorOrientation");
 const brumaControl = document.querySelector("#brumaAlpha");
 const brumaOutput = document.querySelector("#brumaAlphaValue");
@@ -92,9 +95,8 @@ function readSettings() {
   const distance = projectorDistance;
   const aperture = projectorAperture;
   const fieldWidth = 2 * distance * Math.tan(aperture * Math.PI / 360);
-  const sourceRect = sourceCanvas.getBoundingClientRect();
-  const aspect = sourceRect.width > 0 && sourceRect.height > 0
-    ? sourceRect.width / sourceRect.height
+  const aspect = sourceCanvas.width > 0 && sourceCanvas.height > 0
+    ? sourceCanvas.width / sourceCanvas.height
     : 1;
   const fieldHeight = fieldWidth / aspect;
   const orientation = orientationControl.value;

@@ -26,6 +26,12 @@
       <section class="workspace" aria-label="Preview y controles">
         <div class="visual-stack">
           <div class="stage">
+            <div class="projection-zoom-controls" role="group" aria-label="Zoom del láser">
+              <button id="previewZoomOut" type="button" aria-label="Alejar">-</button>
+              <output id="previewZoomValue" aria-live="polite">100%</output>
+              <button id="previewZoomIn" type="button" aria-label="Acercar">+</button>
+              <button id="previewZoomReset" type="button" aria-label="Restablecer zoom" title="Restablecer zoom">↺</button>
+            </div>
             <canvas id="preview" aria-label="Preview animado del shader Curvas"></canvas>
           </div>
           <div class="projection-grid">
