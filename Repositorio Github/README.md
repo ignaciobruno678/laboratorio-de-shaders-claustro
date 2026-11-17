@@ -80,10 +80,8 @@ Nombre visible: **Laboratorio de shaders / c.l.a.u.s.t.r.o**. Un nombre técnico
 
 La **Online Material Library** de MadMapper está pensada para compartir materiales con la comunidad; para trabajar en privado entre las dos, usen el repositorio privado de GitHub.
 
-github.dev no incluye terminal ni ejecuta un servidor de preview. Para probar Gotitas, abre el HTML localmente o, más adelante, publiquemos el preview como sitio web. La guía de GitHub explica [cómo subir archivos desde el navegador](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository) y [cómo usar github.dev](https://docs.github.com/en/codespaces/the-githubdev-web-based-editor).
+github.dev no incluye terminal ni ejecuta un servidor de preview. El workflow `.github/workflows/deploy-pages.yml` publica `preview/` en GitHub Pages cuando se actualizan los previews, los shaders o el generador en `main`. La primera vez, en GitHub abre **Settings > Pages** y elige **GitHub Actions** como fuente de publicación. Luego revisa **Actions** hasta que termine el workflow. Sin un dominio personalizado, la URL esperada es `https://ignaciobruno678.github.io/laboratorio-de-shaders-claustro/`. La guía de GitHub explica [cómo usar github.dev](https://docs.github.com/en/codespaces/the-githubdev-web-based-editor) y [GitHub Pages](https://docs.github.com/en/pages).
 
 ## Seguridad
 
 Primero prueba y ajusta en la visualización de MadMapper. No habilites salida física del láser sin una instalación controlada, límites y medidas de seguridad adecuadas. Consulta [Laser Visualization & Safety](https://docs.madmapper.com/madmapper/6/7.-laser-madlaser/laser-visualization-and-safety).
-
-\n
