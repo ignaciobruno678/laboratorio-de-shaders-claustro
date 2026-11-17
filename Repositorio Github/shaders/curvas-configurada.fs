@@ -1231,9 +1231,15 @@ void laserMaterialFunc(
         mat_brightness;
 
 
+    vec3 pointColor =
+        mat_colorMode == 1 && t >= 0.5
+            ? mat_color2.rgb
+            : mat_color.rgb;
+
+
     color =
         vec4(
-            mat_color.rgb *
+            pointColor *
             brightness,
             1.0
         );

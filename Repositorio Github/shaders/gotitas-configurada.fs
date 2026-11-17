@@ -199,13 +199,41 @@
             "DEFAULT": 1
         },
         {
-            "LABEL": "Color",
+            "LABEL": "Color/Mode",
+            "NAME": "mat_colorMode",
+            "TYPE": "long",
+            "VALUES": [
+                0,
+                1
+            ],
+            "LABELS": [
+                "One Color",
+                "Two Colors"
+            ],
+            "DEFAULT": 0
+        },
+        {
+            "LABEL": "Color/Color 1",
             "NAME": "mat_color",
             "TYPE": "color",
             "DEFAULT": [
                 1,
                 1,
                 1,
+                1
+            ],
+            "FLAGS": [
+                "no_alpha"
+            ]
+        },
+        {
+            "LABEL": "Color/Color 2",
+            "NAME": "mat_color2",
+            "TYPE": "color",
+            "DEFAULT": [
+                0.545098,
+                0.360784,
+                0.964706,
                 1
             ],
             "FLAGS": [
@@ -917,9 +945,23 @@ void laserMaterialFunc(
         mat_brightness;
 
 
+    vec3 pointColor =
+        mat_color.rgb;
+
+
+    if(
+        mat_colorMode == 1 &&
+        armT >= 0.5
+    )
+    {
+        pointColor =
+            mat_color2.rgb;
+    }
+
+
     color =
         vec4(
-            mat_color.rgb *
+            pointColor *
             brightness,
             1.0
         );

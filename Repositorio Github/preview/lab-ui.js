@@ -4,6 +4,7 @@ const labMeta = {
   "fibonakis.html": { name: "Fibonakis", index: "#003" },
   "gotitas.html": { name: "Chispas", index: "#002" },
   "curvas.html": { name: "Curvaturas", index: "#001" },
+  "relampago.html": { name: "Relámpago", index: "#004" },
 };
 const currentFile = window.location.pathname.split("/").pop() || "gotitas.html";
 const currentShader = labMeta[currentFile] || labMeta["gotitas.html"];
@@ -21,8 +22,8 @@ if (panel) {
   panel.prepend(header);
 }
 
-document.querySelectorAll(".control-section").forEach((section, index) => {
-  section.open = index < 3;
+document.querySelectorAll(".control-section").forEach((section) => {
+  section.open = false;
 });
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (!reduceMotion && window.gsap) {

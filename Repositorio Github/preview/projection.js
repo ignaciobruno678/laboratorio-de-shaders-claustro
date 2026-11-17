@@ -140,7 +140,8 @@ function readSettings() {
 function captureFigure() {
   if (sourceCanvas.width <= 0 || sourceCanvas.height <= 0) return null;
 
-  const width = Math.min(Math.round(480 * projectionZoom), sourceCanvas.width);
+  const requestedSampleWidth = Math.max(120, Number(window.projectionSampleWidth) || 480);
+  const width = Math.min(Math.round(requestedSampleWidth * projectionZoom), sourceCanvas.width);
   const height = Math.max(32, Math.round(width * sourceCanvas.height / sourceCanvas.width));
   if (sampleCanvas.width !== width || sampleCanvas.height !== height) {
     sampleCanvas.width = width;
@@ -890,7 +891,25 @@ isoCanvas.addEventListener("pointerup", finishPanning);
 isoCanvas.addEventListener("pointercancel", finishPanning);
 isoCanvas.addEventListener("lostpointercapture", finishPanning);
 
-function renderProjection() {
+let previousProjectionFrame = -Infinity;
+let projectionFps = 0;
+let lastProjectionRender = -Infinity;
+function renderProjection(now) {
+  const frameInterval = Math.max(0, Number(window.projectionFrameInterval) || 0);
+  if (now - previousProjectionFrame < frameInterval) {
+    requestAnimationFrame(renderProjection);
+    return;
+  }
+  previousProjectionFrame = now;
+  if (Number.isFinite(lastProjectionRender)) {
+    const delta = Math.max((now - lastProjectionRender) / 1000, 0.001);
+    const instantaneousFps = Math.min(120, 1 / delta);
+    projectionFps = projectionFps === 0
+      ? instantaneousFps
+      : projectionFps + (instantaneousFps - projectionFps) * 0.18;
+    window.projectionCurrentFps = projectionFps;
+  }
+  lastProjectionRender = now;
   const settings = readSettings();
   const sample = captureFigure();
   const points = collectFigurePixels(sample);
